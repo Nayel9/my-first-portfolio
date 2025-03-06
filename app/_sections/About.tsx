@@ -26,7 +26,7 @@ export default function About() {
         transition={{ duration: 1, delay: 0.3 }}
         className="mt-4 text-lg text-center max-w-3xl mx-auto"
       >
-        Développeur passionné, j'aime concevoir des applications web modernes et
+        Développeur passionné, j&apos;aime concevoir des applications web modernes et
         interactives. Mon objectif est de créer des interfaces élégantes,
         performantes et accessibles à tous.
       </motion.p>

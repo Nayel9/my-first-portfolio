@@ -1,25 +1,23 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import React, {useState} from "react";
+import {motion} from "framer-motion";
+import {useInView} from "react-intersection-observer";
+import {FaCheckCircle, FaTimesCircle} from "react-icons/fa";
 
 export default function Contact() {
-    const [formData, setFormData] = useState({ name: "", lastname: "", company: "", email: "", message: "" });
+    const [formData, setFormData] = useState({name: "", lastname: "", company: "", email: "", message: ""});
     const [status, setStatus] = useState("");
-    const [error, setError] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
-    const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.4 });
+    const {ref, inView} = useInView({triggerOnce: true, threshold: 0.4});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setFieldErrors({ ...fieldErrors, [e.target.name]: false });
+        setFormData({...formData, [e.target.name]: e.target.value});
+        setFieldErrors({...fieldErrors, [e.target.name]: false});
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus("");
-        setError(false);
-        let newErrors: { [key: string]: boolean } = {};
+        const newErrors: { [key: string]: boolean } = {};
 
         // Vérification des champs vides
         ["name", "lastname", "email", "message"].forEach((field) => {
@@ -31,7 +29,6 @@ export default function Contact() {
         if (Object.keys(newErrors).length > 0) {
             setFieldErrors(newErrors);
             setStatus("Veuillez remplir tous les champs obligatoires ❌");
-            setError(true);
             return;
         }
 
@@ -40,29 +37,28 @@ export default function Contact() {
         try {
             const res = await fetch("https://formspree.io/f/xoveajop", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(formData),
             });
 
             if (res.ok) {
                 setStatus("Message envoyé ! ✅");
-                setFormData({ name: "", lastname: "", company: "", email: "", message: "" });
+                setFormData({name: "", lastname: "", company: "", email: "", message: ""});
                 setTimeout(() => setStatus(""), 3000);
             } else {
-                throw new Error("Erreur lors de l'envoi.");
+                setStatus("Erreur lors de l'envoi. Veuillez réessayer plus tard ❌");
             }
-        } catch (error) {
+        } catch {
             setStatus("Erreur lors de l'envoi ❌");
-            setError(true);
         }
     };
 
     return (
         <section id="contact" ref={ref} className="py-20 px-6 bg-gray-100 text-gray-900">
             <motion.h2
-                initial={{ opacity: 0, y: -30 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: -30 }}
-                transition={{ duration: 0.8 }}
+                initial={{opacity: 0, y: -30}}
+                animate={inView ? {opacity: 1, y: 0} : {opacity: 0, y: -30}}
+                transition={{duration: 0.8}}
                 className="text-4xl font-bold text-center"
             >
                 Contactez-moi
@@ -72,16 +68,16 @@ export default function Contact() {
                 onSubmit={handleSubmit}
                 ref={ref}
                 className="max-w-lg mx-auto mt-8 bg-white p-6 rounded-lg shadow-lg"
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : error ? { x: [-10, 10, -10, 10, 0] } : { opacity: 0, y: -30 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                initial={{opacity: 0, y: 30}}
+                animate={inView ? {opacity: 1, y: 0} : {opacity: 0, y: -30}}
+                transition={{duration: 0.8, delay: 0.3}}
             >
                 {[
-                    { label: "Nom", name: "name", type: "text" },
-                    { label: "Prénom", name: "lastname", type: "text" },
-                    { label: "Société (facultatif)", name: "company", type: "text" },
-                    { label: "Email", name: "email", type: "email" },
-                ].map(({ label, name, type }) => (
+                    {label: "Nom", name: "name", type: "text"},
+                    {label: "Prénom", name: "lastname", type: "text"},
+                    {label: "Société (facultatif)", name: "company", type: "text"},
+                    {label: "Email", name: "email", type: "email"},
+                ].map(({label, name, type}) => (
                     <div key={name} className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">{label}</label>
                         <input
@@ -115,11 +111,12 @@ export default function Contact() {
 
                 {status && (
                     <motion.div
-                        className={`mt-4 flex items-center justify-center text-sm ${error ? "text-red-500" : "text-green-500"}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        className={`mt-4 flex items-center justify-center text-sm ${status.includes("❌") ? "text-red-500" : "text-green-500"}`}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
                     >
-                        {error ? <FaTimesCircle className="mr-2 text-xl" /> : <FaCheckCircle className="mr-2 text-xl" />}
+                        {status.includes("❌") ? <FaTimesCircle className="mr-2 text-xl"/> :
+                            <FaCheckCircle className="mr-2 text-xl"/>}
                         <p>{status}</p>
                     </motion.div>
                 )}
