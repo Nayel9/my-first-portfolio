@@ -1,68 +1,60 @@
-import React, { useEffect, useRef } from 'react';
-                        import ScrollMagic from 'scrollmagic';
+"use client";
 
-                        const ScrollMagicGradientBackground: React.FC = () => {
-                            const bgRef = useRef<HTMLDivElement>(null);
+import React, {useEffect, useRef} from "react";
+import {useTheme} from "next-themes";
 
-                            useEffect(() => {
-                                if (!bgRef.current) return;
+export default function ScrollMagicBackground() {
+    const bgRef = useRef<HTMLDivElement>(null);
+    const {theme} = useTheme();
 
-                                const updateBackground = () => {
-                                    const isDarkMode = document.body.classList.contains('dark');
-                                    bgRef.current!.style.background = isDarkMode
-                                        ? `radial-gradient(circle at 50% 50%, #7e92ad, #3c4b6b, #152137, #03081b)`
-                                        : `radial-gradient(circle at 50% 50%,  #77890c , #9abe93, #176100)`;
-                                };
+    useEffect(() => {
+        if (!bgRef.current) return;
 
-                                // Définir le gradient initial centré
-                                updateBackground();
+        const updateBackground = () => {
+            const isDark = theme === "dark";
+            bgRef.current!.style.background = isDark
+                ? `radial-gradient(circle at 50% 50%, #7e92ad, #3c4b6b, #152137, #03081b)`
+                : `radial-gradient(circle at 50% 50%, #77890c, #9abe93, #176100)`;
+        };
+        updateBackground();
 
-                                // Création du contrôleur ScrollMagic avec un objet d'options vide
-                                const controller = new ScrollMagic.Controller({});
+        // Import dynamique de ScrollMagic
+        import("scrollmagic").then((mod) => {
+            const ScrollMagic = mod.default || mod;
+            if (!ScrollMagic.Controller || !ScrollMagic.Scene) return;
 
-                                // Création de la scène ScrollMagic
-                                const scene = new ScrollMagic.Scene({
-                                    triggerElement: document.body,
-                                    triggerHook: 0,
-                                    duration: document.body.scrollHeight - window.innerHeight,
-                                })
-                                    .on('progress', (event: ScrollMagic.ProgressEvent) => {
-                                        if (!bgRef.current) return;
-                                        const progress: number = event.progress;
-                                        // Calcul du déplacement du centre du gradient en fonction du scroll
-                                        const x = 50 + progress * 50; // de 50% à 100%
-                                        const y = 50 - progress * 50; // de 50% à 0%
-                                        bgRef.current!.style.background = document.body.classList.contains('dark')
-                                            ? `radial-gradient(circle at ${x}% ${y}%, #7e92ad, #3c4b6b, #152137, #03081b)`
-                                            : `radial-gradient(circle at ${x}% ${y}%, #77890c , #9abe93, #176100)`;
-                                    })
-                                    .addTo(controller);
+            const controller = new ScrollMagic.Controller();
+            const scene = new ScrollMagic.Scene({
+                triggerElement: document.body,
+                triggerHook: 0,
+                duration: document.body.scrollHeight - window.innerHeight,
+            })
+                .on("progress", (rawEvent: unknown) => {
+                    if (!bgRef.current) return;
 
-                                // Écouter les changements de mode
-                                const observer = new MutationObserver(updateBackground);
-                                observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+                    // On suppose que l'événement possède une prop 'progress'
+                    const event = rawEvent as { progress: number };
+                    const x = 50 + event.progress * 50;
+                    const y = 50 - event.progress * 50;
+                    const isDark = theme === "dark";
 
-                                // Nettoyage au démontage du composant
-                                return () => {
-                                    scene.destroy(true);
-                                    controller.destroy(true);
-                                    observer.disconnect();
-                                };
-                            }, []);
+                    bgRef.current.style.background = isDark
+                        ? `radial-gradient(circle at ${x}% ${y}%, #7e92ad, #3c4b6b, #152137, #03081b)`
+                        : `radial-gradient(circle at ${x}% ${y}%, #77890c, #9abe93, #176100)`;
+                })
+                .addTo(controller);
 
-                            return (
-                                <div
-                                    ref={bgRef}
-                                    style={{
-                                        position: 'fixed',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: '100%',
-                                        zIndex: -1,
-                                    }}
-                                />
-                            );
-                        };
+            return () => {
+                scene.destroy(true);
+                controller.destroy(true);
+            };
+        });
+    }, [theme]);
 
-                        export default ScrollMagicGradientBackground;
+    return (
+        <div
+            ref={bgRef}
+            className="fixed top-0 left-0 w-full h-full -z-10"
+        />
+    );
+}
