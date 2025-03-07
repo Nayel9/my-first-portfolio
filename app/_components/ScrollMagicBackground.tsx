@@ -26,7 +26,7 @@ import React, { useEffect, useRef } from 'react';
                                     triggerHook: 0,
                                     duration: document.body.scrollHeight - window.innerHeight,
                                 })
-                                    .on('progress', (event: any) => {
+                                    .on('progress', (event: ScrollMagic.ProgressEvent) => {
                                         if (!bgRef.current) return;
                                         const progress: number = event.progress;
                                         // Calcul du déplacement du centre du gradient en fonction du scroll
