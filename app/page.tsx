@@ -9,7 +9,7 @@ import ScrollToTop from "@/app/_components/ScrollToTop";
 import Footer from "@/app/_components/Footer";
 import ScrollMagicBackground from "@/app/_components/ScrollMagicBackground";
 import { useEffect } from "react";
-import Carousel from "@/app/_components/Roulette";
+
 
 
 export default function Home() {
@@ -22,7 +22,6 @@ export default function Home() {
     return (
         <div>
             <ScrollMagicBackground />
-            {/*<Carousel />*/}
             <Header/>
             <Hero/>
             <About/>
