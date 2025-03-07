@@ -7,7 +7,7 @@ export default function Contact() {
     const [formData, setFormData] = useState({name: "", lastname: "", company: "", email: "", message: ""});
     const [status, setStatus] = useState("");
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
-    const {ref, inView} = useInView({triggerOnce: true, threshold: 0.4});
+    const {ref, inView} = useInView({triggerOnce: true, threshold: 0.2});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value});
@@ -54,7 +54,7 @@ export default function Contact() {
     };
 
     return (
-        <section id="contact" ref={ref} className="py-20 px-6 bg-gray-100 text-gray-900">
+        <section id="contact" ref={ref} className="py-20 px-6 text-gray-900 dark:text-white">
             <motion.h2
                 initial={{opacity: 0, y: -30}}
                 animate={inView ? {opacity: 1, y: 0} : {opacity: 0, y: -30}}
@@ -67,7 +67,7 @@ export default function Contact() {
             <motion.form
                 onSubmit={handleSubmit}
                 ref={ref}
-                className="max-w-lg mx-auto mt-8 bg-white p-6 rounded-lg shadow-lg"
+                className="max-w-lg mx-auto mt-8 bg-white dark:bg-gray-900  p-6 rounded-lg shadow-lg"
                 initial={{opacity: 0, y: 30}}
                 animate={inView ? {opacity: 1, y: 0} : {opacity: 0, y: -30}}
                 transition={{duration: 0.8, delay: 0.3}}
@@ -79,7 +79,7 @@ export default function Contact() {
                     {label: "Email", name: "email", type: "email"},
                 ].map(({label, name, type}) => (
                     <div key={name} className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">{label}</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
                         <input
                             type={type}
                             name={name}
@@ -92,7 +92,7 @@ export default function Contact() {
                 ))}
 
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Message</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Message</label>
                     <textarea
                         name="message"
                         value={formData.message}
@@ -104,7 +104,7 @@ export default function Contact() {
 
                 <button
                     type="submit"
-                    className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
+                    className="w-full bg-green-700 text-white py-2 rounded-lg hover:bg-green-800 transition"
                 >
                     Envoyer
                 </button>

@@ -40,11 +40,11 @@ export default function Projects() {
     }, []);
 
     return (
-        <section id="projects" ref={ref} className="py-20 px-6 bg-white text-gray-900">
+        <section id="projects" ref={ref} className="py-20 px-6 text-gray-900 dark:text-white">
             <motion.h2
                 initial={{opacity: 0, y: -30}}
                 animate={inView ? {opacity: 1, y: 0} : {opacity: 0, y: -30}}
-                transition={{duration: 0.8}}
+                transition={{duration: 0.6}}
                 className="text-4xl font-bold text-center"
             >
                 Mes Projets
@@ -55,8 +55,8 @@ export default function Projects() {
                         key={project.id}
                         initial={{opacity: 0, scale: 0.8}}
                         animate={inView ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.8}}
-                        transition={{duration: 0.6, delay: 0.2}}
-                        className="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl h-auto max-w-xl"
+                        transition={{duration: 0.4, delay: 0.2}}
+                        className="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-xl h-auto max-w-xl"
                     >
                         <Image
                             src={`/${project.name}.png`}
@@ -65,13 +65,13 @@ export default function Projects() {
                             height={500}
                             className="w-full h-64 object-top object-cover rounded-lg mb-4"
                         />
-                        <h3 className="text-xl font-semibold">{project.name}</h3>
-                        <p className="text-sm text-gray-700 mt-2">{project.description || "Pas de description disponible."}</p>
+                        <h3 className="text-2xl font-semibold">{project.name}</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-200 mt-2">{project.description || "Pas de description disponible."}</p>
                         <a
                             href={project.html_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block mt-4 text-orange-500 hover:text-orange-700"
+                            className="inline-block  text-xl mt-4 text-green-600 hover:text-green-800"
                         >
                             Voir sur GitHub
                         </a>

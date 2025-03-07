@@ -41,7 +41,7 @@ export default function ScrollToTop() {
                 style={{ outline: "none" }}
                 title="Scroll to top"
                 aria-hidden={!isVisible}
-                className="bg-orange-500 text-white p-2 rounded-full shadow-lg hover:bg-orange-600 focus:outline-none cursor-pointer"
+                className="bg-green-700 text-white p-2 rounded-full shadow-lg hover:bg-green-900 focus:outline-none cursor-pointer"
             >
                 <FaArrowUp size={24} />
             </motion.button>
