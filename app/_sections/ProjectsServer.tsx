@@ -8,6 +8,7 @@ interface Project {
     name: string;
     description: string;
     html_url: string;
+    demo_url?: string;
 }
 
 // Ta fonction de fetch SSR
@@ -21,22 +22,48 @@ async function fetchProjects(): Promise<Project[]> {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
         },
         // Optionnel : si tu veux mettre en cache / revalider
-        next: { revalidate: 60 },
+        next: {revalidate: 60},
     });
 
-    const data = await res.json();
+    if (!res.ok) {
+        throw new Error(`Erreur de fetch GitHub: ${res.status}`);
+    }
+
+    const data: Project[] = await res.json();
 
     // Filtrer
-    return data.filter((project: Project) =>
+    const filteredProjects = data.filter((project) =>
         !project.name.toLowerCase().includes("component") &&
         !project.name.toLowerCase().includes("portfolio")
+    );
+
+    // Ajouter la demo_url
+    return await Promise.all(
+        filteredProjects.map(async (project) => {
+            const DEMO_API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${project.name}/pages`;
+
+            try {
+                const demoRes = await fetch(DEMO_API_URL, {
+                    headers: {
+                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+                    },
+                });
+
+                if (demoRes.ok) {
+                    const demoData = await demoRes.json();
+                    project.demo_url = demoData.html_url;
+                }
+            } catch (error) {
+                console.error(`Erreur lors de la récupération de la démo ${project.name}:`, error);
+            }
+            return project;
+        })
     );
 }
 
 export default async function ProjectsServer() {
     // On récupère les projets côté serveur
     const projects = await fetchProjects();
-
     // On délègue le rendu et l'animation à un composant client
     return <ProjectsClient projects={projects}/>;
 }
