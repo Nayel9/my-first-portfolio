@@ -1,9 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
 import gsap from 'gsap';
 import Image from 'next/image';
 import {motion} from 'framer-motion';
 import VerticalCarousel from "@/app/_components/VerticalCarousel";
-import {TbPlayerTrackNextFilled, TbPlayerTrackPrevFilled} from "react-icons/tb";
 
 interface Project {
     id: number;
@@ -17,8 +16,6 @@ interface CarouselProps {
     projects: Project[];
 }
 
-// On définit ici les variants pour chaque carte sans délai individuel.
-// Le délai sera géré par le parent via staggerChildren.
 const cardVariants = {
     offscreen: (custom: { transform: string }) => ({
         opacity: 0,
@@ -34,23 +31,15 @@ const cardVariants = {
 };
 
 const Carousel: React.FC<CarouselProps> = ({projects}) => {
-    // Références pour le conteneur et pour chaque carte
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-    // Rotation globale gérée par GSAP
     const rotation = useRef({value: 0}).current;
-
-    // Références pour les intervalles des boutons de contrôle
-    const leftIntervalRef = useRef<number | null>(null);
-    const rightIntervalRef = useRef<number | null>(null);
-
-    // Pour gérer les gestes tactiles
     const touchStartX = useRef<number>(0);
     const touchStartRotation = useRef<number>(0);
 
-    // Fonction d'animation globale de la rotation du conteneur
-    const animateRotation = (newRotation: number, duration: number = 0.5) => {
+    const [animationComplete, setAnimationComplete] = useState(false);
+
+    const animateRotation = useCallback((newRotation: number, duration: number = 0.5) => {
         gsap.to(rotation, {
             value: newRotation,
             duration,
@@ -62,17 +51,14 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                 }
             },
         });
-    };
+    }, [rotation]);
 
-    // Calcul du positionnement de chaque carte selon son index et le nombre total
     const getCardTransform = (index: number, totalCards: number): string => {
         const angle = (360 / totalCards) * index;
         const radius = ((280 / 2) / Math.tan(Math.PI / totalCards)) * 1.1;
-        // Transformation de base conforme au design
         return `scale(1) rotate(${angle}deg) translate(${radius}px) rotate(90deg) rotateY(0deg) rotateX(90deg)`;
     };
 
-    // Gestion des animations au survol
     const handleHover = (_event: React.MouseEvent<HTMLDivElement>, index: number) => {
         const card = cardRefs.current[index];
         if (card) {
@@ -91,27 +77,30 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
         }
     };
 
-    // Gestion des interactions globales (roulette, clavier, tactile)
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
 
         const handleWheel = (e: WheelEvent) => {
+            if (!animationComplete) return;
             e.preventDefault();
-            animateRotation(rotation.value - e.deltaY * 0.3);
+            animateRotation(rotation.value - e.deltaY * 0.2);
         };
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft') animateRotation(rotation.value + 50);
-            else if (e.key === 'ArrowRight') animateRotation(rotation.value - 50);
+            if (!animationComplete) return;
+            if (e.key === 'ArrowLeft') animateRotation(rotation.value + 30);
+            else if (e.key === 'ArrowRight') animateRotation(rotation.value - 30);
         };
 
         const handleTouchStart = (e: TouchEvent) => {
+            if (!animationComplete) return;
             touchStartX.current = e.touches[0].clientX;
             touchStartRotation.current = rotation.value;
         };
 
         const handleTouchMove = (e: TouchEvent) => {
+            if (!animationComplete) return;
             const deltaX = e.touches[0].clientX - touchStartX.current;
             animateRotation(touchStartRotation.current + deltaX * 0.5, 0.1);
         };
@@ -127,42 +116,10 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
             container.removeEventListener('touchstart', handleTouchStart);
             container.removeEventListener('touchmove', handleTouchMove);
         };
-    }, [animateRotation, rotation]);
-
-    // Gestion de la rotation continue via les boutons Left/Right
-    const handleLeftMouseDown = () => {
-        if (leftIntervalRef.current !== null) return;
-        leftIntervalRef.current = window.setInterval(() => {
-            rotation.value += 10;
-            animateRotation(rotation.value, 0.1);
-        }, 50);
-    };
-
-    const handleLeftMouseUp = () => {
-        if (leftIntervalRef.current !== null) {
-            clearInterval(leftIntervalRef.current);
-            leftIntervalRef.current = null;
-        }
-    };
-
-    const handleRightMouseDown = () => {
-        if (rightIntervalRef.current !== null) return;
-        rightIntervalRef.current = window.setInterval(() => {
-            rotation.value -= 10;
-            animateRotation(rotation.value, 0.1);
-        }, 50);
-    };
-
-    const handleRightMouseUp = () => {
-        if (rightIntervalRef.current !== null) {
-            clearInterval(rightIntervalRef.current);
-            rightIntervalRef.current = null;
-        }
-    };
+    }, [animateRotation, rotation.value, animationComplete]);
 
     return (
-        <section className="h-screen flex flex-col items-center gap-4 overflow-hidden">
-            {/* Conteneur parent qui déclenche l'animation dès l'entrée dans le viewport */}
+        <section className="h-[550px] md:h-[800px] flex flex-col pt-12 items-center gap-4 overflow-hidden">
             <motion.div
                 initial="offscreen"
                 whileInView="onscreen"
@@ -171,12 +128,13 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                     onscreen: {
                         transition: {
                             delayChildren: 0,
-                            staggerChildren: 0.2
+                            staggerChildren: 0.2,
+                            onComplete: () => setAnimationComplete(true),
                         },
                     },
                 }}
-                className="relative h-3/5 w-full md:flex md:items-center md:justify-center hidden md:visible"
-            >
+                onAnimationComplete={() => setAnimationComplete(true)}
+                className="relative h-3/5 w-full hidden md:flex md:items-center md:justify-center">
                 <div
                     ref={containerRef}
                     className="flex items-center w-full h-full justify-center"
@@ -195,7 +153,6 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                 ref={(el) => {
                                     cardRefs.current[index] = el;
                                     if (el) {
-                                        // Stocker la transformation de base pour les animations de survol
                                         el.dataset.initialTransform = transformStyle;
                                     }
                                 }}
@@ -246,26 +203,6 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                     })}
                 </div>
             </motion.div>
-            {/* Boutons de contrôle pour desktop */}
-            <div className="mt-30 md:flex md:justify-center space-x-4 hidden md:visible">
-                <button
-                    onMouseDown={handleLeftMouseDown}
-                    onMouseUp={handleLeftMouseUp}
-                    onMouseLeave={handleLeftMouseUp}
-                    className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                    <TbPlayerTrackPrevFilled/>
-                </button>
-                <button
-                    onMouseDown={handleRightMouseDown}
-                    onMouseUp={handleRightMouseUp}
-                    onMouseLeave={handleRightMouseUp}
-                    className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                    <TbPlayerTrackNextFilled/>
-                </button>
-            </div>
-            {/* Composant pour l'affichage mobile */}
             <VerticalCarousel projects={projects}/>
         </section>
     );

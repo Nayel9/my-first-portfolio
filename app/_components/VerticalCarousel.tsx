@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useCallback} from 'react';
 import gsap from 'gsap';
 import Image from "next/image";
 
@@ -15,16 +15,12 @@ interface CarouselProps {
 }
 
 const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
-    // Référence du conteneur du carrousel
     const containerRef = useRef<HTMLDivElement>(null);
-    // Objet de rotation pour GSAP (rotationZ)
     const rotation = useRef({value: 0}).current;
-    // Pour gérer les gestes tactiles
     const touchStartY = useRef<number>(0);
     const touchStartRotation = useRef<number>(0);
 
-    // Fonction d'animation générale pour mettre à jour la rotation
-    const animateRotation = (newRotation: number, duration: number = 0.5) => {
+    const animateRotation = useCallback((newRotation: number, duration: number = 0.5) => {
         gsap.to(rotation, {
             value: newRotation,
             duration: duration,
@@ -36,14 +32,12 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                 }
             },
         });
-    };
+    }, [rotation]);
 
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
 
-
-        // Gestion des événements tactiles pour mobile
         const handleTouchStart = (e: TouchEvent) => {
             touchStartY.current = e.touches[0].clientY;
             touchStartRotation.current = rotation.value;
@@ -51,8 +45,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
 
         const handleTouchMove = (e: TouchEvent) => {
             const deltaY = e.touches[0].clientY - touchStartY.current;
-            // Ajuster la sensibilité pour le tactile
-            const newRotation = touchStartRotation.current + deltaY * 0.5;
+            const newRotation = touchStartRotation.current + deltaY * 0.15;
             animateRotation(newRotation, 0.1);
         };
 
@@ -63,24 +56,22 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
             container.removeEventListener('touchstart', handleTouchStart);
             container.removeEventListener('touchmove', handleTouchMove);
         };
-    }, [animateRotation]);
+    }, [animateRotation, rotation.value]);
 
     const getCardTransform = (index: number, totalCards: number): string => {
         const angle = (360 / totalCards) * index;
         const radius = ((360 / 2) / Math.tan(Math.PI / totalCards)) * 1.4;
-        // Transformation de base conforme au design
         return `rotate(${angle}deg) translate(${radius}px) rotateY(-90deg) rotateX(0deg)`;
     };
 
     return (
-        <div className="md:h-full w-full flex md:items-center md:hidden mt-10 h-[700px] overflow-hidden">
+        <div className="md:h-full w-full flex md:items-center md:hidden mt-10 h-[800px] overflow-hidden">
             <div
                 ref={containerRef}
                 className="w-[1200px] h-[1300px] flex items-center justify-center rounded-full"
                 style={{
                     transformStyle: 'preserve-3d',
                     transform: 'rotateX(0deg) rotateY(90deg)',
-                    // perspective: '2000px',
                 } as React.CSSProperties}
             >
                 {projects.map((project, index) => {
@@ -101,7 +92,8 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                                 height={500}
                                 className="w-full h-1/2 object-top object-cover rounded-t-lg mb-4"
                             />
-                            <div className="flex w-full h-auto p-6 flex-col flex-grow justify-between text-gray-700 dark:text-gray-200">
+                            <div
+                                className="flex w-full h-auto p-6 flex-col flex-grow justify-between text-gray-700 dark:text-gray-200">
                                 <div>
                                     <h3 className="text-2xl font-semibold">{project.name}</h3>
                                     <p className="text-sm  mt-2 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -133,9 +125,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                     );
                 })}
             </div>
-
         </div>
-
     );
 };
 

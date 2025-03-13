@@ -1,6 +1,7 @@
 // app/_sections/ProjectsServer.tsx (Server Component)
 import React from "react";
-import ProjectsClient from "./ProjectsClient";
+import ProjectsClient from "@/app/_components/ProjectsClient";
+
 
 // Déclare l'interface du projet
 interface Project {
@@ -31,15 +32,9 @@ async function fetchProjects(): Promise<Project[]> {
 
     const data: Project[] = await res.json();
 
-    // Filtrer
-    const filteredProjects = data.filter((project) =>
-        !project.name.toLowerCase().includes("component") &&
-        !project.name.toLowerCase().includes("portfolio")
-    );
-
     // Ajouter la demo_url
     return await Promise.all(
-        filteredProjects.map(async (project) => {
+        data.map(async (project) => {
             const DEMO_API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${project.name}/pages`;
 
             try {
