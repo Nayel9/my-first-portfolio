@@ -164,12 +164,18 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                 onMouseOut={(e) => handleLeave(e, index)}
                             >
                                 <Image
+                                    unoptimized
                                     src={`/${project.name}.png`}
                                     alt={project.name}
                                     width={500}
                                     height={500}
                                     className="w-full h-1/2 object-top object-cover rounded-lg mb-4"
+                                    onError={(e) => {
+                                        e.currentTarget.onerror = null;
+                                        e.currentTarget.src = `/project-placeholder.webp`;
+                                    }}
                                 />
+
                                 <div className="flex flex-col flex-grow justify-between">
                                     <div>
                                         <h3 className="text-2xl font-semibold">{project.name}</h3>

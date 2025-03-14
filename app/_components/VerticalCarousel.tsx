@@ -94,11 +94,16 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                             }}
                         >
                             <Image
+                                unoptimized
                                 src={`/${project.name}.png`}
                                 alt={project.name}
                                 width={500}
                                 height={500}
-                                className="w-full h-1/2 object-top object-cover rounded-t-lg mb-4"
+                                className="w-full h-1/2 object-top object-cover rounded-lg mb-4"
+                                onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = `/project-placeholder.webp`;
+                                }}
                             />
                             <div
                                 className="flex w-full h-auto p-6 flex-col flex-grow justify-between text-gray-700 dark:text-gray-200">
