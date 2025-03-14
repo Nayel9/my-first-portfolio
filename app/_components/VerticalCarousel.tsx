@@ -39,24 +39,30 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
         if (!container) return;
 
         const handleTouchStart = (e: TouchEvent) => {
-            e.preventDefault();
             touchStartY.current = e.touches[0].clientY;
             touchStartRotation.current = rotation.value;
         };
 
         const handleTouchMove = (e: TouchEvent) => {
-            e.preventDefault();
             const deltaY = e.touches[0].clientY - touchStartY.current;
             const newRotation = touchStartRotation.current + deltaY * 0.15;
             animateRotation(newRotation, 0.1);
         };
 
+        const preventPageScroll = (e: TouchEvent) => {
+            if (container.contains(e.target as Node)) {
+                e.preventDefault();
+            }
+        };
+
         container.addEventListener('touchstart', handleTouchStart, {passive: true});
         container.addEventListener('touchmove', handleTouchMove, {passive: true});
+        document.addEventListener('touchmove', preventPageScroll, {passive: false});
 
         return () => {
             container.removeEventListener('touchstart', handleTouchStart);
             container.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('touchmove', preventPageScroll);
         };
     }, [animateRotation, rotation.value]);
 
