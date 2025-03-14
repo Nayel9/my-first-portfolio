@@ -39,11 +39,13 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
         if (!container) return;
 
         const handleTouchStart = (e: TouchEvent) => {
+            e.preventDefault();
             touchStartY.current = e.touches[0].clientY;
             touchStartRotation.current = rotation.value;
         };
 
         const handleTouchMove = (e: TouchEvent) => {
+            e.preventDefault();
             const deltaY = e.touches[0].clientY - touchStartY.current;
             const newRotation = touchStartRotation.current + deltaY * 0.15;
             animateRotation(newRotation, 0.1);

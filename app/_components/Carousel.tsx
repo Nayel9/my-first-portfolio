@@ -102,7 +102,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
         const handleTouchMove = (e: TouchEvent) => {
             if (!animationComplete) return;
             const deltaX = e.touches[0].clientX - touchStartX.current;
-            animateRotation(touchStartRotation.current + deltaX * 0.5, 0.1);
+            animateRotation(touchStartRotation.current + deltaX * 0.15, 0.1);
         };
 
         container.addEventListener('wheel', handleWheel);
