@@ -94,7 +94,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({ projects }) => {
                     return (
                         <div
                             key={project.id}
-                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[460px] w-[320px] flex flex-col justify-center items-center cursor-pointer"
+                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[460px] w-[340px] flex flex-col justify-center items-center cursor-pointer"
                             style={{
                                 backfaceVisibility: "hidden",
                                 transform: transformStyle,
