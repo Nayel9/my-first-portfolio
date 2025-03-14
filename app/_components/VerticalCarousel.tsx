@@ -1,6 +1,9 @@
-import React, {useEffect, useRef, useCallback} from 'react';
-import gsap from 'gsap';
+"use client";
+
+import React, { useEffect, useRef, useCallback } from "react";
+import gsap from "gsap";
 import Image from "next/image";
+import { useTranslation } from "next-i18next";
 
 interface Project {
     id: number;
@@ -14,25 +17,29 @@ interface CarouselProps {
     projects: Project[];
 }
 
-const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
+const VerticalCarousel: React.FC<CarouselProps> = ({ projects }) => {
+    const { t } = useTranslation("common");
     const containerRef = useRef<HTMLDivElement>(null);
-    const rotation = useRef({value: 0}).current;
+    const rotation = useRef({ value: 0 }).current;
     const touchStartY = useRef<number>(0);
     const touchStartRotation = useRef<number>(0);
 
-    const animateRotation = useCallback((newRotation: number, duration: number = 0.5) => {
-        gsap.to(rotation, {
-            value: newRotation,
-            duration: duration,
-            ease: 'power2.out',
-            overwrite: 'auto',
-            onUpdate: () => {
-                if (containerRef.current) {
-                    containerRef.current.style.transform = `rotateX(0deg) rotateY(90deg) rotateZ(${rotation.value}deg)`;
-                }
-            },
-        });
-    }, [rotation]);
+    const animateRotation = useCallback(
+        (newRotation: number, duration: number = 0.5) => {
+            gsap.to(rotation, {
+                value: newRotation,
+                duration: duration,
+                ease: "power2.out",
+                overwrite: "auto",
+                onUpdate: () => {
+                    if (containerRef.current) {
+                        containerRef.current.style.transform = `rotateX(0deg) rotateY(90deg) rotateZ(${rotation.value}deg)`;
+                    }
+                },
+            });
+        },
+        [rotation]
+    );
 
     useEffect(() => {
         const container = containerRef.current;
@@ -55,14 +62,14 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
             }
         };
 
-        container.addEventListener('touchstart', handleTouchStart, {passive: true});
-        container.addEventListener('touchmove', handleTouchMove, {passive: true});
-        document.addEventListener('touchmove', preventPageScroll, {passive: false});
+        container.addEventListener("touchstart", handleTouchStart, { passive: true });
+        container.addEventListener("touchmove", handleTouchMove, { passive: true });
+        document.addEventListener("touchmove", preventPageScroll, { passive: false });
 
         return () => {
-            container.removeEventListener('touchstart', handleTouchStart);
-            container.removeEventListener('touchmove', handleTouchMove);
-            document.removeEventListener('touchmove', preventPageScroll);
+            container.removeEventListener("touchstart", handleTouchStart);
+            container.removeEventListener("touchmove", handleTouchMove);
+            document.removeEventListener("touchmove", preventPageScroll);
         };
     }, [animateRotation, rotation.value]);
 
@@ -78,8 +85,8 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                 ref={containerRef}
                 className="w-[1200px] h-[1300px] flex items-center justify-center rounded-full"
                 style={{
-                    transformStyle: 'preserve-3d',
-                    transform: 'rotateX(0deg) rotateY(90deg)',
+                    transformStyle: "preserve-3d",
+                    transform: "rotateX(0deg) rotateY(90deg)",
                 } as React.CSSProperties}
             >
                 {projects.map((project, index) => {
@@ -87,9 +94,9 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                     return (
                         <div
                             key={project.id}
-                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[460px] w-[360px] flex flex-col justify-center items-center cursor-pointer"
+                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[460px] w-[320px] flex flex-col justify-center items-center cursor-pointer"
                             style={{
-                                backfaceVisibility: 'hidden',
+                                backfaceVisibility: "hidden",
                                 transform: transformStyle,
                             }}
                         >
@@ -105,12 +112,11 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                                     e.currentTarget.src = `/project-placeholder.webp`;
                                 }}
                             />
-                            <div
-                                className="flex w-full h-auto p-6 flex-col flex-grow justify-between text-gray-700 dark:text-gray-200">
+                            <div className="flex w-full h-auto p-6 flex-col flex-grow justify-between text-gray-700 dark:text-gray-200">
                                 <div>
                                     <h3 className="text-2xl font-semibold">{project.name}</h3>
-                                    <p className="text-sm  mt-2 overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {project.description || "Pas de description disponible."}
+                                    <p className="text-sm mt-2 overflow-hidden text-ellipsis whitespace-nowrap">
+                                        {project.description || t("projects.noDescription")}
                                     </p>
                                 </div>
                                 <div className="flex flex-row justify-between">
@@ -120,7 +126,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                                         rel="noopener noreferrer"
                                         className="inline-block text-xl mt-4 text-green-600 hover:text-green-800"
                                     >
-                                        Voir sur GitHub
+                                        {t("projects.viewGithub")}
                                     </a>
                                     {project.demo_url && (
                                         <a
@@ -129,7 +135,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({projects}) => {
                                             rel="noopener noreferrer"
                                             className="inline-block text-xl mt-4 text-amber-600 hover:text-amber-800"
                                         >
-                                            Demo
+                                            {t("projects.demo")}
                                         </a>
                                     )}
                                 </div>

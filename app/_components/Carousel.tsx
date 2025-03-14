@@ -1,8 +1,11 @@
-import React, {useEffect, useRef, useState, useCallback} from 'react';
-import gsap from 'gsap';
-import Image from 'next/image';
-import {motion} from 'framer-motion';
+"use client";
+
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import gsap from "gsap";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import VerticalCarousel from "@/app/_components/VerticalCarousel";
+import { useTranslation } from "next-i18next";
 
 interface Project {
     id: number;
@@ -26,32 +29,35 @@ const cardVariants = {
         opacity: 1,
         scale: 1,
         transform: custom.transform,
-        transition: {duration: 0.6, ease: 'easeInOut'},
+        transition: { duration: 0.6, ease: "easeInOut" },
     }),
 };
 
-const Carousel: React.FC<CarouselProps> = ({projects}) => {
+const Carousel: React.FC<CarouselProps> = ({ projects }) => {
+    const { t } = useTranslation("common");
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const rotation = useRef({value: 0}).current;
+    const rotation = useRef({ value: 0 }).current;
     const touchStartX = useRef<number>(0);
     const touchStartRotation = useRef<number>(0);
-
     const [animationComplete, setAnimationComplete] = useState(false);
 
-    const animateRotation = useCallback((newRotation: number, duration: number = 0.5) => {
-        gsap.to(rotation, {
-            value: newRotation,
-            duration,
-            ease: 'power2.out',
-            overwrite: 'auto',
-            onUpdate: () => {
-                if (containerRef.current) {
-                    containerRef.current.style.transform = `rotateX(-100deg) rotateZ(${rotation.value}deg)`;
-                }
-            },
-        });
-    }, [rotation]);
+    const animateRotation = useCallback(
+        (newRotation: number, duration: number = 0.5) => {
+            gsap.to(rotation, {
+                value: newRotation,
+                duration,
+                ease: "power2.out",
+                overwrite: "auto",
+                onUpdate: () => {
+                    if (containerRef.current) {
+                        containerRef.current.style.transform = `rotateX(-100deg) rotateZ(${rotation.value}deg)`;
+                    }
+                },
+            });
+        },
+        [rotation]
+    );
 
     const getCardTransform = (index: number, totalCards: number): string => {
         const angle = (360 / totalCards) * index;
@@ -63,17 +69,17 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
         const card = cardRefs.current[index];
         if (card) {
             card.style.transform = `${card.dataset.initialTransform} scale(1.2) translateZ(50px) translateY(-50px) rotateY(0deg)`;
-            card.style.transition = 'transform 0.3s ease-in-out';
-            card.style.backfaceVisibility = 'visible';
+            card.style.transition = "transform 0.3s ease-in-out";
+            card.style.backfaceVisibility = "visible";
         }
     };
 
     const handleLeave = (_event: React.MouseEvent<HTMLDivElement>, index: number) => {
         const card = cardRefs.current[index];
         if (card) {
-            card.style.transform = card.dataset.initialTransform || '';
-            card.style.transition = 'transform 0.4s ease-in-out';
-            card.style.backfaceVisibility = 'hidden';
+            card.style.transform = card.dataset.initialTransform || "";
+            card.style.transition = "transform 0.4s ease-in-out";
+            card.style.backfaceVisibility = "hidden";
         }
     };
 
@@ -89,8 +95,8 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!animationComplete) return;
-            if (e.key === 'ArrowLeft') animateRotation(rotation.value + 30);
-            else if (e.key === 'ArrowRight') animateRotation(rotation.value - 30);
+            if (e.key === "ArrowLeft") animateRotation(rotation.value + 30);
+            else if (e.key === "ArrowRight") animateRotation(rotation.value - 30);
         };
 
         const handleTouchStart = (e: TouchEvent) => {
@@ -105,16 +111,16 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
             animateRotation(touchStartRotation.current + deltaX * 0.15, 0.1);
         };
 
-        container.addEventListener('wheel', handleWheel);
-        window.addEventListener('keydown', handleKeyDown);
-        container.addEventListener('touchstart', handleTouchStart, {passive: true});
-        container.addEventListener('touchmove', handleTouchMove, {passive: true});
+        container.addEventListener("wheel", handleWheel);
+        window.addEventListener("keydown", handleKeyDown);
+        container.addEventListener("touchstart", handleTouchStart, { passive: true });
+        container.addEventListener("touchmove", handleTouchMove, { passive: true });
 
         return () => {
-            container.removeEventListener('wheel', handleWheel);
-            window.removeEventListener('keydown', handleKeyDown);
-            container.removeEventListener('touchstart', handleTouchStart);
-            container.removeEventListener('touchmove', handleTouchMove);
+            container.removeEventListener("wheel", handleWheel);
+            window.removeEventListener("keydown", handleKeyDown);
+            container.removeEventListener("touchstart", handleTouchStart);
+            container.removeEventListener("touchmove", handleTouchMove);
         };
     }, [animateRotation, rotation.value, animationComplete]);
 
@@ -123,7 +129,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
             <motion.div
                 initial="offscreen"
                 whileInView="onscreen"
-                viewport={{once: true, amount: 0}}
+                viewport={{ once: true, amount: 0 }}
                 variants={{
                     onscreen: {
                         transition: {
@@ -134,13 +140,14 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                     },
                 }}
                 onAnimationComplete={() => setAnimationComplete(true)}
-                className="relative h-3/5 w-full hidden md:flex md:items-center md:justify-center">
+                className="relative h-3/5 w-full hidden md:flex md:items-center md:justify-center"
+            >
                 <div
                     ref={containerRef}
                     className="flex items-center w-full h-full justify-center"
                     style={{
-                        transformStyle: 'preserve-3d',
-                        transform: 'rotateX(-100deg) rotateZ(0deg)',
+                        transformStyle: "preserve-3d",
+                        transform: "rotateX(-100deg) rotateZ(0deg)",
                     }}
                 >
                     {projects.map((project, index) => {
@@ -149,7 +156,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                             <motion.div
                                 variants={cardVariants}
                                 key={project.id}
-                                custom={{transform: transformStyle}}
+                                custom={{ transform: transformStyle }}
                                 ref={(el) => {
                                     cardRefs.current[index] = el;
                                     if (el) {
@@ -158,7 +165,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                 }}
                                 className="absolute bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-xl w-[280px] h-[350px] max-w-xl flex flex-col cursor-pointer"
                                 style={{
-                                    backfaceVisibility: 'hidden',
+                                    backfaceVisibility: "hidden",
                                 }}
                                 onMouseOver={(e) => handleHover(e, index)}
                                 onMouseOut={(e) => handleLeave(e, index)}
@@ -180,7 +187,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                     <div>
                                         <h3 className="text-2xl font-semibold">{project.name}</h3>
                                         <p className="text-sm text-gray-700 dark:text-gray-200 mt-2 overflow-hidden text-ellipsis whitespace-nowrap">
-                                            {project.description || "Pas de description disponible."}
+                                            {project.description || t("projects.noDescription")}
                                         </p>
                                     </div>
                                     <div className="flex flex-row justify-between">
@@ -190,7 +197,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                             rel="noopener noreferrer"
                                             className="inline-block text-xl mt-4 text-green-600 hover:text-green-800"
                                         >
-                                            Voir sur GitHub
+                                            {t("projects.viewGithub")}
                                         </a>
                                         {project.demo_url && (
                                             <a
@@ -199,7 +206,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                                                 rel="noopener noreferrer"
                                                 className="inline-block text-xl mt-4 text-amber-600 hover:text-amber-800"
                                             >
-                                                Demo
+                                                {t("projects.demo")}
                                             </a>
                                         )}
                                     </div>
@@ -209,7 +216,7 @@ const Carousel: React.FC<CarouselProps> = ({projects}) => {
                     })}
                 </div>
             </motion.div>
-            <VerticalCarousel projects={projects}/>
+            <VerticalCarousel projects={projects} />
         </section>
     );
 };

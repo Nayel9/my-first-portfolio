@@ -3,8 +3,12 @@
 import Link from "next/link";
 import {motion} from "framer-motion";
 import Footer from "@/app/_components/Footer";
+import { useTranslation } from "next-i18next";
 
 export default function Custom404() {
+
+    const { t } = useTranslation('common');
+
     return (
         <div className="flex-grow">
             <div
@@ -15,7 +19,7 @@ export default function Custom404() {
                     transition={{duration: 0.5}}
                     className="text-9xl font-bold text-gray-900 dark:text-white"
                 >
-                    <span className="text-green-700 dark:text-emerald-700">404</span> Error
+                    <span className="text-green-700 dark:text-emerald-700">{t('notFound.titleSpan')}</span> {t('notFound.title')}
                 </motion.h1>
                 <motion.p
                     initial={{opacity: 0}}
@@ -23,7 +27,7 @@ export default function Custom404() {
                     transition={{delay: 0.3, duration: 0.5}}
                     className="mt-4 text-xl text-gray-800 dark:text-gray-300"
                 >
-                    Oups, la page que vous recherchez n'existe pas.
+                    {t('notFound.description')}
                 </motion.p>
                 <motion.div
                     initial={{opacity: 0}}
@@ -34,7 +38,7 @@ export default function Custom404() {
                         href="/"
                         className="mt-8 px-6 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md shadow-md transition-colors"
                     >
-                        Retour à l'accueil
+                        {t('notFound.backHome')}
                     </Link>
                 </motion.div>
             </div>

@@ -1,0 +1,51 @@
+{
+  "hero": {
+    "title": "Hi, I'm a",
+    "titleSpan": " React Developer",
+    "subtitle": "Passionate about web development and technology since childhood, I create modern, interactive, and high-performance experiences. I'm ready to tackle new challenges."
+  },
+  "about": {
+    "title": "About Me",
+    "description": "I've always been fascinated by technology: I love discovering new tools and learning continuously. Curious and driven, I channel my energy into creating modern, intuitive, and accessible interfaces. Every project is an opportunity to push my limits and share my passion.",
+    "skillsTitle": "Skills"
+  },
+  "contact": {
+    "title": "Contact Me",
+    "name": "First Name",
+    "lastname": "Last Name",
+    "company": "Company (optional)",
+    "email": "Email",
+    "message": "Message",
+    "submit": "Send",
+    "required": "This field is required",
+    "sending": "Sending...",
+    "sent": "Message sent!",
+    "error": "Error sending message. Please try again later",
+    "fillAll": "Please fill in all required fields ❌",
+    "interaction": "↓ Scroll to learn more ↓"
+  },
+  "header": {
+    "portfolio": "My Portfolio",
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "footer": {
+    "rights": "All rights reserved"
+  },
+  "projects": {
+    "title": "My Projects",
+    "toggleAll": "Show all projects",
+    "toggleFormations": "Show formation projects",
+    "noDescription": "No description available.",
+    "viewGithub": "View on GitHub",
+    "demo": "Demo"
+  },
+    "notFound": {
+        "titleSpan": "404",
+        "title": "Error",
+        "backHome": "Back to home",
+        "description": "Sorry, the page you're looking for doesn't exist. Please check the URL or return to the homepage."
+    }
+}

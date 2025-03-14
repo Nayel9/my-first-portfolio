@@ -1,25 +1,23 @@
-// app/layout.tsx
-import type {Metadata} from "next";
-import "./globals.css";
 import React from "react";
-import {ThemeProvider} from "next-themes";
+import type { Metadata } from "next";
+import "./globals.css";
+import { Providers } from "@/app/providers";
 
 export const metadata: Metadata = {
     title: "Nahuel - Portfolio",
     description: "This is my portfolio",
 };
 
-export default function RootLayout({
-                                       children,
-                                   }: {
-    children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="fr" suppressHydrationWarning>
-        <body className="antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system">
+        <html lang="fr">
+        <head>
+            <title>My Portfolio</title>
+        </head>
+        <body>
+        <Providers>
             {children}
-        </ThemeProvider>
+        </Providers>
         </body>
         </html>
     );
