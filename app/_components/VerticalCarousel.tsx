@@ -75,12 +75,12 @@ const VerticalCarousel: React.FC<CarouselProps> = ({ projects }) => {
 
     const getCardTransform = (index: number, totalCards: number): string => {
         const angle = (360 / totalCards) * index;
-        const radius = ((360 / 2) / Math.tan(Math.PI / totalCards)) * 1.4;
+        const radius = ((360 / 2) / Math.tan(Math.PI / totalCards)) * 1.25;
         return `rotate(${angle}deg) translate(${radius}px) rotateY(-90deg) rotateX(0deg)`;
     };
 
     return (
-        <div className="md:h-full w-full flex md:items-center md:hidden mt-10 h-[800px] overflow-hidden">
+        <div className=" w-full flex md:hidden mt-10 h-[900px] overflow-hidden">
             <div
                 ref={containerRef}
                 className="w-[1200px] h-[1300px] flex items-center justify-center rounded-full"
@@ -94,7 +94,7 @@ const VerticalCarousel: React.FC<CarouselProps> = ({ projects }) => {
                     return (
                         <div
                             key={project.id}
-                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[460px] w-[340px] flex flex-col justify-center items-center cursor-pointer"
+                            className="absolute bg-gray-100 dark:bg-gray-900 p-2 rounded-lg shadow-lg hover:shadow-xl h-[420px] w-[340px] flex flex-col justify-center items-center cursor-pointer"
                             style={{
                                 backfaceVisibility: "hidden",
                                 transform: transformStyle,

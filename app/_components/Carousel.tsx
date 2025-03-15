@@ -125,7 +125,7 @@ const Carousel: React.FC<CarouselProps> = ({ projects }) => {
     }, [animateRotation, rotation.value, animationComplete]);
 
     return (
-        <section className="h-[550px] md:h-[800px] flex flex-col pt-12 items-center gap-4 overflow-hidden">
+        <section className="h-[800px] md:h-[800px] flex flex-col pt-12 items-center gap-4 overflow-hidden">
             <motion.div
                 initial="offscreen"
                 whileInView="onscreen"
